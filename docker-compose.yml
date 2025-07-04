@@ -1,0 +1,51 @@
+services:
+    backend:
+        build: ./Django_Backend
+        volumes:
+            - ./Django_Backend:/app
+        ports:
+            - '8000:8000'
+        depends_on:
+            - mysql
+            - redis
+        environment:
+            - MYSQL_HOST=mysql
+            - MYSQL_USER=root
+            - MYSQL_PASSWORD=Navithkumar2001@9
+            - MYSQL_DATABASE=backend
+            - REDIS_HOST=redis
+            - REDIS_PORT=6379
+
+    frontend:
+        build: ./react_frontend
+        volumes:
+            - ./react_frontend:/app
+            - /app/node_modules
+        command: npm run dev
+        ports:
+            - '3000:3000'
+        stdin_open: true
+        tty: true
+
+    mysql:
+        image: mysql:8.0
+        restart: always
+        environment:
+            MYSQL_ROOT_PASSWORD: Navithkumar2001@9
+            MYSQL_DATABASE: backend
+        ports:
+            - '3307:3306'
+        volumes:
+            - mysql_data:/var/lib/mysql
+
+    redis:
+        image: redis:7.2-alpine
+        ports:
+            - '6379:6379'
+        volumes:
+            - redis_data:/data
+        restart: always
+
+volumes:
+    mysql_data:
+    redis_data:
