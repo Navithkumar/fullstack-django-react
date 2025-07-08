@@ -1,0 +1,48 @@
+.navbar-custom {
+    background: linear-gradient(to bottom, #f1e6ff, white);
+}
+
+.zepto-logo {
+    height: 36px;
+    object-fit: contain;
+}
+
+.super-toggle {
+    background-color: #f5f3fa;
+    border-radius: 2rem;
+    padding: 3px 16px;
+    border: 2px solid #e0ddee;
+}
+.super-text {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #5e5e5e;
+}
+
+.location-selector {
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+.search-bar .input-group {
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #e0ddee;
+    background-color: white;
+}
+.search-bar input {
+    border: none;
+    box-shadow: none;
+}
+.search-bar .input-group-text {
+    border: none;
+}
+
+.nav-action {
+    font-size: 0.75rem;
+    text-decoration: none;
+    transition: 0.3s;
+}
+.nav-action:hover {
+    color: #6f42c1;
+}
