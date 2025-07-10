@@ -1,9 +1,18 @@
+import { useEffect, useState } from 'react';
 import { BiSearch } from 'react-icons/bi';
 import { BsCart, BsPerson } from 'react-icons/bs';
+import { Link } from 'react-router-dom';
 import zeptoLogo from '../assets/primary-logo.svg';
 import './component.css';
 
 function Navbar() {
+    const [token, setAccessToken] = useState(null);
+
+    useEffect(() => {
+        const accessToken = localStorage.getItem('access');
+        setAccessToken(accessToken);
+    }, []);
+
     return (
         <nav className="navbar-custom shadow-sm sticky-top">
             <div className="container-fluid d-flex align-items-center justify-content-between px-4 py-2">
@@ -32,22 +41,22 @@ function Navbar() {
                         />
                     </div>
                 </div>
-
                 <div className="d-flex align-items-center gap-4">
-                    <a
-                        href="/login"
+                    <Link
+                        to={token ? '/profile' : '/login'}
                         className="text-dark text-center nav-action"
                     >
                         <BsPerson size={24} />
-                        <div>Login</div>
-                    </a>
-                    <a
-                        href="/cart"
+                        <div>{token ? 'Profile' : 'Login'}</div>
+                    </Link>
+
+                    <Link
+                        to="/cart"
                         className="text-dark text-center nav-action"
                     >
                         <BsCart size={24} />
                         <div>Cart</div>
-                    </a>
+                    </Link>
                 </div>
             </div>
         </nav>

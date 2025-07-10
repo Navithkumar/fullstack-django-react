@@ -3,8 +3,10 @@ from rest_framework.response import Response
 from core.response import success_response,error_response
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
-from .serializers import RegisterSerializer, LoginSerializer
+from .serializers import RegisterSerializer, LoginSerializer,SliderbarSerializer
 from django.db import transaction
+from .models import Slidebar
+from rest_framework.permissions import IsAuthenticated
 
 class RegisterView(APIView):
     def post(self, request):
@@ -45,3 +47,21 @@ class LoginView(APIView):
         except Exception as e:
             return error_response("Error while login", str(e))
 
+class SlidebarView(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self,request):
+        try:
+            user = request.user
+            slidebars = Slidebar.objects.all()
+            serializer = SliderbarSerializer(slidebars, many=True)
+            response_data = {
+                "user":{
+                    "username":user.username,
+                    "phone_number" : user.phone_number,
+                    "role":user.role
+                },
+                "slidebars": serializer.data
+            }
+            return success_response("Sliderbar Fetched Successfully",response_data)
+        except Exception as e:
+            return error_response("Error while login", str(e))
