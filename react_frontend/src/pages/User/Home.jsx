@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
 import Helmet from 'react-helmet';
-import Navbar from '../components/Navbar';
+import Navbar from '../../components/users/Navbar';
 function Home() {
     useEffect(() => {
-        document.title = "Fruits Store"
-    },[]);
+        document.title = 'Fruits Store';
+    }, []);
     return (
         <>
             <Helmet>

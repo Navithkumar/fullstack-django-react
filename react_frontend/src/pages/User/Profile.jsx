@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import Navbar from '../components/Navbar';
-import { slidebar } from '../services/userService';
-import './Profile.css'; // for custom styles
+import Navbar from '../../components/users/Navbar';
+import { slidebar } from '../../services/User/userService';
+import './Profile.css';
 
 function SidebarProfile() {
     const [user, setUser] = useState(null);

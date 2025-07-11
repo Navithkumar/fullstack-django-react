@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { BiSearch } from 'react-icons/bi';
 import { BsCart, BsPerson } from 'react-icons/bs';
 import { Link } from 'react-router-dom';
-import zeptoLogo from '../assets/primary-logo.svg';
+import zeptoLogo from '../../assets/primary-logo.svg';
 import './component.css';
 
 function Navbar() {
