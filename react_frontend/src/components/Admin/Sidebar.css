@@ -1,0 +1,35 @@
+.sidebar {
+    width: 250px;
+    min-height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #fff;
+    transition: all 0.3s ease-in-out;
+    z-index: 1000;
+}
+
+.sidebar-profile .profile-img {
+    width: 60px;
+    height: 60px;
+}
+
+.nav-link {
+    color: #333;
+    padding: 10px 15px;
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.nav-link:hover,
+.nav-item.active > .nav-link {
+    background-color: #f0f0f0;
+    color: #007bff;
+}
+
+.collapsible {
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
