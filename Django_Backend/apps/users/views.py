@@ -1,12 +1,13 @@
+from functools import partial
 from rest_framework.views import APIView
-from rest_framework.response import Response
 from core.response import success_response,error_response
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import RegisterSerializer, LoginSerializer,SliderbarSerializer
 from django.db import transaction
-from .models import Slidebar
+from .models import Slidebar,User
 from rest_framework.permissions import IsAuthenticated
+from django.shortcuts import get_object_or_404
 
 class RegisterView(APIView):
     def post(self, request):
@@ -20,7 +21,6 @@ class RegisterView(APIView):
                     return error_response("Validation failed", serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return error_response("Error while registering", str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 class LoginView(APIView):
     def post(self, request):
@@ -65,3 +65,39 @@ class SlidebarView(APIView):
             return success_response("Sliderbar Fetched Successfully",response_data)
         except Exception as e:
             return error_response("Error while login", str(e))
+
+class ListUsersView(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self,request):
+      try:
+          users = User.objects.all()
+          serializer = RegisterSerializer(users,many=True)
+          return success_response("Users Fetched Successfully",serializer.data)
+      except Exception as e:
+          return error_response("Error while login", str(e))
+
+class EditUsersView(APIView):
+    permission_classes = [IsAuthenticated]
+    def patch(self,request,id=id):
+      try:
+          with transaction.atomic():
+            prevData = get_object_or_404(User,id=id)
+            serializer = RegisterSerializer(prevData,data = request.data,partial=True)
+            if serializer.is_valid():
+              serializer.save()
+              return success_response("User Updated Successfully",serializer.data)
+            else:
+                    return error_response("Validation failed", serializer.errors)
+      except Exception as e:
+          return error_response("User Updation Failed", str(e))
+
+class DeleteUserView(APIView):
+    permission_classes = [IsAuthenticated]
+    def delete(self,request,id):
+        try:
+          with transaction.atomic():
+              data = get_object_or_404(User,id=id)
+              data.delete()
+              return success_response("User Deleted Successfully")
+        except Exception as e:
+            return error_response("User deletion Failed", str(e))
