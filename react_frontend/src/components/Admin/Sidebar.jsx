@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import profile from '../../assets/Admin_panel/face1.jpg';
+import '../../components/Admin/Sidebar.css';
 import { AdminSlidebar } from '../../services/Admin/slidebarServices';
-const Sidebar = () => {
+const Sidebar = ({ setActiveComponent }) => {
     const navigate = useNavigate();
     const [sidebarData, setSidebarData] = useState([]);
     const [user, setUser] = useState({});
@@ -34,26 +35,37 @@ const Sidebar = () => {
                 />
                 <h6 className="fw-bold mb-0">{user?.username}</h6>
                 <small className="text-muted">
-                    Role: {user == 1 ? 'Super Admin' : 'Seller'}
+                    Role: {user.role == 1 ? 'Super Admin' : 'Seller'}
                 </small>
             </div>
 
-            <ul className="nav flex-column p-3">
-                {sidebarData.map((item) => (
-                    <li
-                        key={item.id}
-                        className={`nav-item ${
-                            isActive(`/${item.slidebar_name.toLowerCase()}`)
-                                ? 'active'
-                                : ''
-                        }`}
-                    >
-                        <Link className="nav-link" to={item.link}>
-                            <i className={`${item.icons} me-2`}></i>{' '}
-                            {item.slidebar_name}
-                        </Link>
-                    </li>
-                ))}
+            <ul className="nav flex-column sidebar-menu px-3 pt-3">
+                {sidebarData.map(
+                    (item) =>
+                        item.role.includes(user.role) && (
+                            <li
+                                key={item.id}
+                                className={`nav-item sidebar-item ${
+                                    isActive(
+                                        `/${item.slidebar_name.toLowerCase()}`,
+                                    )
+                                        ? 'active'
+                                        : ''
+                                }`}
+                                onClick={() =>
+                                    setActiveComponent(item.component)
+                                }
+                                style={{ cursor: 'pointer' }}
+                            >
+                                <i
+                                    className={`${item.icons} sidebar-icon me-2`}
+                                ></i>
+                                <span className="sidebar-text">
+                                    {item.slidebar_name}
+                                </span>
+                            </li>
+                        ),
+                )}
             </ul>
         </nav>
     );
