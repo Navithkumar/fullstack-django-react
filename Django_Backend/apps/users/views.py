@@ -1,4 +1,3 @@
-from functools import partial
 from rest_framework.views import APIView
 from core.response import success_response,error_response
 from rest_framework import status
@@ -8,6 +7,8 @@ from django.db import transaction
 from .models import Slidebar,User
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
+from core.pagination  import MyCustomPagination
+from django.db.models import Q
 
 class RegisterView(APIView):
     def post(self, request):
@@ -70,9 +71,14 @@ class ListUsersView(APIView):
     permission_classes = [IsAuthenticated]
     def get(self,request):
       try:
-          users = User.objects.all()
-          serializer = RegisterSerializer(users,many=True)
-          return success_response("Users Fetched Successfully",serializer.data)
+          users = User.objects.exclude(Q(id=request.user.id) | Q(is_superuser = 1))
+          pagination = MyCustomPagination()
+          result_data = pagination.paginate_queryset(users,request)
+          serializer = RegisterSerializer(result_data,many=True)
+          if serializer:
+            return pagination.get_paginated_response(serializer.data)
+          else:
+              return success_response("No Products Found")
       except Exception as e:
           return error_response("Error while login", str(e))
 
