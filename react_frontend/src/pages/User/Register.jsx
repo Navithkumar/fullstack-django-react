@@ -1,10 +1,11 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
+import { useNavigate } from 'react-router-dom';
 import './Register.css';
 const Register = () => {
     const [role, setRole] = useState('customer');
-
+    const navigate = useNavigate();
     const [form, setForm] = useState({
         username: '',
         email: '',
@@ -53,6 +54,7 @@ const Register = () => {
                 } registered successfully!`,
                 type: 'success',
             });
+            navigate('/login');
         } catch {
             setToast({
                 show: true,
