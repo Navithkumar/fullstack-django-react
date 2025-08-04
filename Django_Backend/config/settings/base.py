@@ -19,7 +19,8 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'core',
     'apps.users',
-    'apps.Admin_panel'
+    'apps.Admin_panel',
+    'apps.Category'
 ]
 
 MIDDLEWARE = [
@@ -125,3 +126,6 @@ CACHES = {
 
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "default"
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
