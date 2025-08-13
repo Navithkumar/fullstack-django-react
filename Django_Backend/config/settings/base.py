@@ -20,7 +20,8 @@ INSTALLED_APPS = [
     'core',
     'apps.users',
     'apps.Admin_panel',
-    'apps.Category'
+    'apps.Category.apps.CategoryConfig',
+    'apps.Admin_Permissions'
 ]
 
 MIDDLEWARE = [

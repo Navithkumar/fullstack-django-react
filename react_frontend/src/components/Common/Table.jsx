@@ -25,11 +25,33 @@ function Table({
                         {data.map((value, index) => (
                             <tr key={index}>
                                 <td>{index + 1}</td>
-                                <td>{value.username}</td>
-                                <td>{value.email}</td>
+                                <td>{value.username || value.category_name}</td>
                                 <td>
-                                    {value.role == 2 ? 'Customer' : 'Seller'}
+                                    {value.email ? (
+                                        value.email
+                                    ) : (
+                                        <img
+                                            src={`http://localhost:8000${value.category_image}`}
+                                            alt="Category"
+                                            style={{
+                                                width: '50px',
+                                                height: '50px',
+                                                objectFit: 'cover',
+                                            }}
+                                        />
+                                    )}
                                 </td>
+
+                                <td>
+                                    {value.role === 2
+                                        ? 'Customer'
+                                        : value.status === 1
+                                        ? 'Pending'
+                                        : value.status === 2
+                                        ? 'Approved'
+                                        : 'Declined'}
+                                </td>
+
                                 {edit == true ? (
                                     <td>
                                         <button

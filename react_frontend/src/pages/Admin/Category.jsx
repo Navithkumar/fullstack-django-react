@@ -1,5 +1,16 @@
-import Form from '../../components/Common/Form';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Table from '../../components/Common/Table';
+import { categoryServices } from '../../services/Admin/categoryServices';
 function Category() {
+    const tableHeaders = [
+        'S.NO',
+        'Category Name',
+        'Category Image',
+        'Status',
+        'Action',
+    ];
+
     const fields = [
         {
             name: 'category_name',
@@ -33,12 +44,37 @@ function Category() {
         } catch (error) {}
     };
 
+    const navigate = useNavigate();
+    const [categoryData, setCategoryData] = useState([]);
+    const [pagination, setPagination] = useState(null);
+
+    const fetchData = async () => {
+        try {
+            const response = await categoryServices();
+            setCategoryData(response.data || []);
+            setPagination(response.pagination || null);
+        } catch (error) {
+            if (error.response?.status === 401) {
+                localStorage.removeItem('access');
+                navigate('/login');
+            } else {
+                alert('Failed to fetch categories');
+            }
+        }
+    };
+
+    useEffect(() => {
+        fetchData();
+    }, [navigate]);
+
     return (
         <>
-            <div>
-                <Form fields={fields} onSubmit={handleSubmit} />
-            </div>
-            <div>Category</div>;
+            <Table
+                headers={tableHeaders}
+                data={categoryData}
+                pagination={pagination}
+                edit={true}
+            />
         </>
     );
 }
