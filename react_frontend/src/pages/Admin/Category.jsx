@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import CommonModal from '../../components/Common/modal';
+import CommonPagination from '../../components/Common/Pagination';
 import Table from '../../components/Common/Table';
 import { categoryServices } from '../../services/Admin/categoryServices';
+
 function Category() {
     const tableHeaders = [
         'S.NO',
@@ -41,18 +44,35 @@ function Category() {
             for (let pair of formData.entries()) {
                 console.log(`${pair[0]}:`, pair[1]);
             }
-        } catch (error) {}
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     const navigate = useNavigate();
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const [categoryData, setCategoryData] = useState([]);
-    const [pagination, setPagination] = useState(null);
+    const [pagination, setPagination] = useState({
+        next: null,
+        previous: null,
+        count: 0,
+    });
+    const [currentPage, setCurrentPage] = useState(1);
 
-    const fetchData = async () => {
+    const handleFormSubmit = (data) => {
+        console.log('Form submitted:', data);
+        // API call to save category
+        //call create api
+    };
+
+    const fetchData = async (page = 1) => {
         try {
-            const response = await categoryServices();
+            const response = await categoryServices(page);
             setCategoryData(response.data || []);
-            setPagination(response.pagination || null);
+            setPagination(
+                response.pagination || { next: null, previous: null, count: 0 },
+            );
+            setCurrentPage(page);
         } catch (error) {
             if (error.response?.status === 401) {
                 localStorage.removeItem('access');
@@ -64,7 +84,7 @@ function Category() {
     };
 
     useEffect(() => {
-        fetchData();
+        fetchData(currentPage);
     }, [navigate]);
 
     return (
@@ -75,6 +95,25 @@ function Category() {
                 pagination={pagination}
                 edit={true}
             />
+            <CommonPagination
+                pagination={pagination}
+                currentPage={currentPage}
+                onPageChange={fetchData}
+                pageSize={5}
+            />
+            <CommonModal
+                title="Add Category"
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                fields={fields}
+                onSubmit={handleFormSubmit}
+            />
+            <button
+                className="btn btn-primary"
+                onClick={() => setIsModalOpen(true)}
+            >
+                + Add Category
+            </button>
         </>
     );
 }
