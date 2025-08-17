@@ -3,9 +3,22 @@ import { useNavigate } from 'react-router-dom';
 import CommonModal from '../../components/Common/modal';
 import CommonPagination from '../../components/Common/Pagination';
 import Table from '../../components/Common/Table';
-import { categoryServices } from '../../services/Admin/categoryServices';
+import {
+    categoryServices,
+    SaveCategory,
+} from '../../services/Admin/categoryServices';
 
 function Category() {
+    const navigate = useNavigate();
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [categoryData, setCategoryData] = useState([]);
+    const [pagination, setPagination] = useState({
+        next: null,
+        previous: null,
+        count: 0,
+    });
+    const [currentPage, setCurrentPage] = useState(1);
+
     const tableHeaders = [
         'S.NO',
         'Category Name',
@@ -29,40 +42,30 @@ function Category() {
         },
     ];
 
-    const handleSubmit = (data) => {
+    const handleFormSubmit = async (data) => {
         try {
             const formData = new FormData();
-            for (const key in data) {
-                if (data[key] instanceof FileList) {
-                    if (data[key].length > 0) {
-                        formData.append(key, data[key][0]);
-                    }
-                } else {
-                    formData.append(key, data[key]);
-                }
+            formData.append('category_name', data.category_name);
+            if (
+                data.category_image &&
+                data.category_image instanceof FileList &&
+                data.category_image.length > 0
+            ) {
+                formData.append('category_image', data.category_image[0]);
             }
-            for (let pair of formData.entries()) {
-                console.log(`${pair[0]}:`, pair[1]);
-            }
+            await SaveCategory(formData);
+            alert('Category saved successfully!');
+            setIsModalOpen(false);
+            fetchData();
         } catch (error) {
-            console.error(error);
+            console.error('Error saving category:', error);
+            if (error.response?.status === 401) {
+                localStorage.removeItem('access');
+                navigate('/login');
+            } else {
+                alert('Failed to save the category. Please try again.');
+            }
         }
-    };
-
-    const navigate = useNavigate();
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [categoryData, setCategoryData] = useState([]);
-    const [pagination, setPagination] = useState({
-        next: null,
-        previous: null,
-        count: 0,
-    });
-    const [currentPage, setCurrentPage] = useState(1);
-
-    const handleFormSubmit = (data) => {
-        console.log('Form submitted:', data);
-        // API call to save category
-        //call create api
     };
 
     const fetchData = async (page = 1) => {
@@ -74,21 +77,28 @@ function Category() {
             );
             setCurrentPage(page);
         } catch (error) {
+            console.error('Error fetching categories:', error);
             if (error.response?.status === 401) {
                 localStorage.removeItem('access');
                 navigate('/login');
             } else {
-                alert('Failed to fetch categories');
+                alert('Failed to fetch categories. Please try again.');
             }
         }
     };
 
     useEffect(() => {
         fetchData(currentPage);
-    }, [navigate]);
+    }, [navigate, currentPage]); // Added currentPage to dependency array to re-fetch on page change
 
     return (
         <>
+            <button
+                className="btn btn-primary"
+                onClick={() => setIsModalOpen(true)}
+            >
+                + Add Category
+            </button>
             <Table
                 headers={tableHeaders}
                 data={categoryData}
@@ -108,12 +118,6 @@ function Category() {
                 fields={fields}
                 onSubmit={handleFormSubmit}
             />
-            <button
-                className="btn btn-primary"
-                onClick={() => setIsModalOpen(true)}
-            >
-                + Add Category
-            </button>
         </>
     );
 }

@@ -1,3 +1,4 @@
+from apps.Category.models import Category
 from rest_framework.views import APIView
 from core.response import success_response,error_response
 from rest_framework import status
@@ -44,6 +45,19 @@ class ApprovePermission(APIView):
                             'status':True,
                             'message':'Permission updated Successfully',
                         })
+          rows_updated = Category.objects.filter(id=permissions.category_id).update(
+                status=Category.Status.APPROVED
+            )
+            
+          if rows_updated == 0:
+              transaction.set_rollback(True)
+              return error_response(
+                    {
+                        'status': False,
+                        'message': 'Category not found or not updated'
+                    },
+                    status=status.HTTP_404_NOT_FOUND
+                )
           return success_response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
       except Exception as e:
           return error_response("Error while Fetching Permissions", str(e))

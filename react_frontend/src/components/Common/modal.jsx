@@ -8,9 +8,34 @@ const CommonModal = ({ title, isOpen, onClose, fields, onSubmit }) => {
 
     const validationSchema = fields.reduce((schema, field) => {
         if (field.validation) {
-            schema[field.name] = Yup.string().required(
-                field.validation.required || 'This field is required',
-            );
+            if (field.type === 'file') {
+                schema[field.name] = field.validation.required
+                    ? Yup.mixed()
+                          .required(
+                              field.validation.required || 'File is required',
+                          )
+                          .test('fileType', 'Invalid file type', (value) => {
+                              if (!value || !value[0]) return true;
+                              return field.accept
+                                  ? field.accept
+                                        .split(',')
+                                        .some(
+                                            (type) =>
+                                                value[0].type.includes(
+                                                    type.replace('*', ''),
+                                                ) ||
+                                                value[0].name.endsWith(
+                                                    type.replace('*', ''),
+                                                ),
+                                        )
+                                  : true;
+                          })
+                    : Yup.mixed();
+            } else {
+                schema[field.name] = Yup.string().required(
+                    field.validation.required || 'This field is required',
+                );
+            }
         }
         return schema;
     }, {});

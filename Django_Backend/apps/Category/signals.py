@@ -14,9 +14,7 @@ def category_created_handler(sender, instance, created, **kwargs):
             user=instance.user,
         )
 
-@receiver(post_save, sender=Permissions)
-def Permission_update_handler(sender, instance, created, **kwargs):
-    if instance.category:
-        Category.objects.filter(id=instance.category.id).update(
-            status=Category.Status.APPROVED
-        )
+# @receiver(post_save, sender=Permissions)
+# def Permission_update_handler(sender, instance, created, **kwargs):
+#     if instance.category:
+#         print("111")
